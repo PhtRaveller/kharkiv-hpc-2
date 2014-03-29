@@ -3,8 +3,9 @@
 from integrators import Runge2Order
 from observers import WritingObserver
 
+# "Abstract" class for dynamical system
 class DynSystem(object):
-    ''''''
+    '''"Abstract" class representing dynamical system.'''
     def __init__(self, initx, params):
         self.x = initx
         self.dim = len(initx)
@@ -12,25 +13,26 @@ class DynSystem(object):
         self.params = params
 
     def represent(self):
-        ''''''
+        '''Template method for printing information about a system. Override it
+        in subclasses.'''
         pass
         
 
     def force(self, time, x=None):
-        ''''''
+        '''Template method, which calculates forces. Override it in subclasses.'''
         pass
 
     def set_integrator(self, integrator):
-        ''''''
         self.integrator = integrator
 
     def add_observer(self, observer):
-        ''''''
         self.observers.append(observer)
         observer.add_subject(self)
 
     def integrate(self):
-        ''''''
+        '''Integration method. Proceeds one step using integrator (Strategy pattern),
+        checks for event for each observer and updates observers if necessary
+        (Observer pattern).'''
         for time in self.integrator.points():
             self.x = self.integrator.make_step(self)
 
@@ -38,8 +40,9 @@ class DynSystem(object):
                 if observer.event(time):
                     observer.update(time)
 
+# Concrete classes for dynamical systems
 class Oscillator(DynSystem):
-    ''''''
+    '''Concrete class for harmonic oscillator.'''
     def represent(self):
         for i in range(self.dim/2):
             print "x{0}={1}, p{0}={2}".format(i, self.x[i], self.x[i+self.dim/2])
@@ -51,7 +54,7 @@ class Oscillator(DynSystem):
         return xf + pf
 
 class LorenzSystem(DynSystem):
-    ''''''
+    '''Concrete class for Lorenz system.'''
     def force(self, time, x=None):
         if x is None:
             x = self.x
