@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+# "Abstract" observer class
 class Observer(object):
     def __init__(self, params):
         self.params = params
@@ -18,10 +19,11 @@ class Observer(object):
     def update(self, time):
         pass
 
+# Concrete observer classes
 class WritingObserver(Observer):
     def event(self, time):
         return True
 
     def update(self, time):
-        s = "{:f} {:f} " * self.subject.dim
-        print s.format(*(self.subject.x+self.subject.p))
+        s = "{:f} " * self.subject.dim
+        print s.format(*self.subject.x)
